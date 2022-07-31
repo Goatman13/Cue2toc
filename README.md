@@ -1,3 +1,10 @@
+# cue2toc
+Python script to create TOC files for PS1 emulator in PS4.
+Usage: py cue2toc.py [path to cue file]
+
+No error handling beside what's already in Cue2cu2, but luckily that's enough to warn user about multibin files that need to be merged first.
+
+Based on parts of (is literally copy pasted code of those 2 apps) pop-fe code, and mostly on:
 # Cue2cu2
 Cue2cu2 is a free software, open source Python program to create a CU2 sheet from an existing, monolithic bin/cue set for use with CybDyn Systems' PSIO.
 ## Status of this program
