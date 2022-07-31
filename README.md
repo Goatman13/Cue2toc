@@ -1,6 +1,7 @@
 # cue2toc
 Python script to create TOC files for PS1 emulator in PS4.
-Usage: py cue2toc.py [path to cue file]
+<br>Usage: py cue2toc.py [path to cue file]
+<br>Exe usage in cmd: cue2toc [path to cue file] or just drag'n'drop .cue file on cue2toc.exe
 
 No error handling beside what's already in Cue2cu2, but luckily that's enough to warn user about multibin files that need to be merged first.
 
