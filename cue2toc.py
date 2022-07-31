@@ -390,5 +390,56 @@ else:
 		cu2file = open(cu2sheet,"wb")
 		cu2file.write(output.encode())
 		cu2file.close
+		cu2file = open(cu2sheet,"rb")
+		def bcd(i):
+			return int(i % 10) + 16 * (int(i / 10) % 10)
+
+		_toc_header = bytes([
+		0x41, 0x00, 0xa0, 0x00, 0x00, 0x00, 0x00, 0x01, 0x20, 0x00,
+		0x01, 0x00, 0xa1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x01, 0x00, 0xa2, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+		])
+	
+		toc = bytearray(_toc_header)
+
+		with open(cu2sheet, 'r') as f:
+			lines = f.readlines()
+
+		# Find the number of tracks and trk_end
+		num_tracks = None
+		trk_end = None
+		for line in lines:
+			if re.search('^ntracks', line):
+				num_tracks = int(line[7:])
+			if re.search('^trk end', line):
+				trk_end = line[10:]
+		# number of tracks
+		toc[17] = bcd(num_tracks)
+		# size of image
+		toc[27] = bcd(int(trk_end[:2]))
+		toc[28] = bcd(int(trk_end[3:5]))
+		toc[29] = bcd(int(trk_end[6:8]))
+
+		buf = bytearray(10)
+		track = 1
+		for line in lines:
+			if not re.search('^data', line) and not re.search('^track', line):
+				continue
+			
+			msf = line[10:]
+			buf[0] = 0x41 if track == 1 else 0x01
+			buf[2] = bcd(track)
+			buf[7] = bcd(int(msf[:2]))
+			buf[8] = bcd(int(msf[3:5]))
+			buf[9] = bcd(int(msf[6:8]))
+			
+			track = track + 1
+			toc = toc + buf
+			
+		tocsheet = binaryfile[::-1][4:][::-1]+".TOC"
+		tocfile = open(tocsheet,"wb")
+		tocfile.write(toc)
+		tocfile.close
+		
 	except:
 		error("Could not write to "+str(cu2sheet))
