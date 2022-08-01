@@ -423,7 +423,14 @@ else:
 		buf = bytearray(10)
 		track = 1
 		for line in lines:
-			if not re.search('^data', line) and not re.search('^track', line):
+			if not re.search('^data', line) and not re.search('^track', line) and not re.search('^pregap', line):
+				continue
+			
+			if re.search('^pregap', line):
+				msf = line[10:]
+				buf[3] = bcd(int(msf[:2]))
+				buf[4] = bcd(int(msf[3:5]))
+				buf[5] = bcd(int(msf[6:8]))
 				continue
 			
 			msf = line[10:]
